@@ -10,7 +10,7 @@ import java.util.List;
 public interface UserService {
     public List<UserDTO> get() throws SQLException;
 
-    public UserDTO get(int id);
+    public UserDTO get(Long id);
 
     UserDTO get(String user, String password);
 

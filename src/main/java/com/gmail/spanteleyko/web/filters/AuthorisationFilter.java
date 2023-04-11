@@ -1,6 +1,7 @@
 package com.gmail.spanteleyko.web.filters;
 
-import com.gmail.spanteleyko.web.constants.PropertyConstants;
+import com.gmail.spanteleyko.web.constants.RoleConstants;
+import com.gmail.spanteleyko.web.constants.ViewNameConstants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,8 +26,8 @@ public class AuthorisationFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         HttpSession session = request.getSession();
 
-        if (session.getAttribute(PropertyConstants.USER_SESSION_NAME) == null) {
-            response.sendRedirect(PropertyConstants.LOGIN_PAGE);
+        if (session.getAttribute(RoleConstants.USER_SESSION_NAME) == null) {
+            response.sendRedirect(ViewNameConstants.LOGIN_PAGE);
             return;
         }
 

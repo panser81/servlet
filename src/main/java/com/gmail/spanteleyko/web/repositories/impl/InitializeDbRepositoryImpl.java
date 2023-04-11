@@ -58,7 +58,7 @@ public class InitializeDbRepositoryImpl implements InitializeDbRepository {
                     password VARCHAR(40) NOT NULL,
                     createdBy TIMESTAMP NOT NULL);
                 CREATE TABLE "ROLE" 
-                    (user_id INTEGER NOT NULL,
+                    (user_id BIGINT NOT NULL,
                     name VARCHAR(40) NOT NULL,
                     description VARCHAR(40) NOT NULL);
                 ALTER TABLE "ROLE" 
