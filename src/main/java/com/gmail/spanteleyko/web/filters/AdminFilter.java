@@ -1,6 +1,7 @@
 package com.gmail.spanteleyko.web.filters;
 
-import com.gmail.spanteleyko.web.constants.PropertyConstants;
+import com.gmail.spanteleyko.web.constants.RoleConstants;
+import com.gmail.spanteleyko.web.constants.ViewNameConstants;
 import com.gmail.spanteleyko.web.models.RoleDTO;
 import com.gmail.spanteleyko.web.models.UserDTO;
 import org.apache.logging.log4j.LogManager;
@@ -29,12 +30,12 @@ public class AdminFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpSession session = httpRequest.getSession();
 
-        UserDTO user = (UserDTO) session.getAttribute(PropertyConstants.USER_SESSION_NAME);
+        UserDTO user = (UserDTO) session.getAttribute(RoleConstants.USER_SESSION_NAME);
 
         List<RoleDTO> roles = user.getRoles();
 
-        if (!roles.stream().anyMatch(role -> role.getName().equals(PropertyConstants.ADMIN_ROLE_NAME))) {
-            httpResponse.sendRedirect(PropertyConstants.LOGIN_PAGE);
+        if (!roles.stream().anyMatch(role -> role.getName().equals(RoleConstants.ADMIN_ROLE_NAME))) {
+            httpResponse.sendRedirect(ViewNameConstants.LOGIN_PAGE);
             return;
         }
 

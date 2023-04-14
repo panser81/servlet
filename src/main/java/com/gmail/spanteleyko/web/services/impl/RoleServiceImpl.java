@@ -15,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class RoleServiceImpl implements RoleService {
@@ -31,33 +32,46 @@ public class RoleServiceImpl implements RoleService {
         return roleService;
     }
 
-    private RoleServiceImpl() throws ClassNotFoundException, SQLException {
+    private RoleServiceImpl() throws ClassNotFoundException {
         roleRepository = RoleRepositoryImpl.getInstance();
         connectionRepository = ConnectionRepositoryImpl.getInstance();
     }
 
     @Override
-    public List<RoleDTO> get(int id) throws SQLException {
+    public List<RoleDTO> get(Long id) throws SQLException {
         try (Connection connection = connectionRepository.getConnection()) {
             connection.setAutoCommit(false);
-            List<Role> roles = roleRepository.get(connection, id);
-            return RoleConverter.convertToDTO(roles);
+            try {
+                List<Role> roles = roleRepository.get(connection, id);
+                connection.commit();
+                return RoleConverter.convertToDTO(roles);
+            } catch (SQLException se) {
+                connection.rollback();
+                logger.error(se.getMessage(), se);
+            }
         } catch (SQLException e) {
+
             logger.error(e.getMessage(), e);
         }
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 
     @Override
     public List<RoleDTO> get() throws SQLException {
         try (Connection connection = connectionRepository.getConnection()) {
             connection.setAutoCommit(false);
-            List<Role> roles = roleRepository.get(connection);
-            return RoleConverter.convertToDTO(roles);
+            try {
+                List<Role> roles = roleRepository.get(connection);
+                connection.commit();
+                return RoleConverter.convertToDTO(roles);
+            } catch (SQLException se) {
+                connection.rollback();
+                logger.error(se.getMessage(), se);
+            }
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
         }
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 
     @Override

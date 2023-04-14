@@ -1,6 +1,7 @@
 package com.gmail.spanteleyko.web.services.impl;
 
-import com.gmail.spanteleyko.web.constants.PropertyConstants;
+import com.gmail.spanteleyko.web.constants.RoleConstants;
+import com.gmail.spanteleyko.web.constants.ViewNameConstants;
 import com.gmail.spanteleyko.web.converters.RoleConverter;
 import com.gmail.spanteleyko.web.converters.UserConverter;
 import com.gmail.spanteleyko.web.exceptions.AddUserException;
@@ -19,6 +20,7 @@ import org.apache.logging.log4j.Logger;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class UserServiceImpl implements UserService {
@@ -46,19 +48,36 @@ public class UserServiceImpl implements UserService {
     public List<UserDTO> get() throws SQLException {
         try (Connection connection = connectionRepository.getConnection()) {
             connection.setAutoCommit(false);
-            List<User> users = userRepository.get(connection);
-            return UserConverter.convert(users);
+
+            try {
+                List<User> users = userRepository.get(connection);
+                connection.commit();
+                return UserConverter.convert(users);
+            } catch (SQLException se) {
+                connection.rollback();
+                logger.error(se.getMessage(), se);
+            }
+
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
         }
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 
     @Override
-    public UserDTO get(int id) {
+    public UserDTO get(Long id) {
         try (Connection connection = connectionRepository.getConnection()) {
             connection.setAutoCommit(false);
-            return UserConverter.convert(userRepository.get(connection, id));
+
+            try {
+                User user = userRepository.get(connection, id);
+                connection.commit();
+
+                return UserConverter.convert(user);
+            } catch (SQLException se) {
+                connection.rollback();
+                logger.error(se.getMessage(), se);
+            }
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
         }
@@ -70,17 +89,22 @@ public class UserServiceImpl implements UserService {
         try (Connection connection = connectionRepository.getConnection()) {
             connection.setAutoCommit(false);
 
-            User user = userRepository.get(connection, username, password);
+            try {
+                User user = userRepository.get(connection, username, password);
 
-            if (user == null) {
-                return null;
+                if (user == null) {
+                    return null;
+                }
+
+                List<RoleDTO> roles = roleService.get(user.getId());
+
+                user.setRoles(RoleConverter.convert(roles));
+                connection.commit();
+                return UserConverter.convert(user);
+            } catch (SQLException se) {
+                connection.rollback();
+                logger.error(se.getMessage(), se);
             }
-
-            List<RoleDTO> roles = roleService.get(user.getId());
-
-            user.setRoles(RoleConverter.convert(roles));
-
-            return UserConverter.convert(user);
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
         }
@@ -121,8 +145,8 @@ public class UserServiceImpl implements UserService {
 
         List<RoleDTO> rolesForFirstUser = new ArrayList<>();
 
-        RoleDTO firstRole = roleService.add(getRole(firstInsertedUser.getId(), PropertyConstants.ADMIN_ROLE_NAME, "admin role"));
-        RoleDTO secondRole = roleService.add(getRole(firstInsertedUser.getId(), PropertyConstants.USER_ROLE_NAME, "user role"));
+        RoleDTO firstRole = roleService.add(getRole(firstInsertedUser.getId(), RoleConstants.ADMIN_ROLE_NAME, "admin role"));
+        RoleDTO secondRole = roleService.add(getRole(firstInsertedUser.getId(), RoleConstants.USER_ROLE_NAME, "user role"));
 
         rolesForFirstUser.add(firstRole);
         rolesForFirstUser.add(secondRole);
@@ -136,17 +160,14 @@ public class UserServiceImpl implements UserService {
 
         List<RoleDTO> rolesForSecondUser = new ArrayList<>();
 
-        RoleDTO thirdRole = roleService.add(getRole(secondInsertedUser.getId(), PropertyConstants.USER_ROLE_NAME, "user role"));
+        RoleDTO thirdRole = roleService.add(getRole(secondInsertedUser.getId(), RoleConstants.USER_ROLE_NAME, "user role"));
         rolesForSecondUser.add(thirdRole);
 
         secondUser.setRoles(rolesForSecondUser);
     }
 
-    private RoleDTO getRole(Integer id, String name, String description) {
-        RoleDTO role = new RoleDTO();
-        role.setId(id);
-        role.setName(name);
-        role.setDescription(description);
+    private RoleDTO getRole(Long id, String name, String description) {
+        RoleDTO role = new RoleDTO(id, name, description);
         return role;
     }
 }

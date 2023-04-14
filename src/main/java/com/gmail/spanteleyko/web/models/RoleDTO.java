@@ -1,9 +1,15 @@
 package com.gmail.spanteleyko.web.models;
 
 public class RoleDTO {
-    private Integer id;
+    private Long id;
     private String name;
     private String description;
+
+    public RoleDTO(Long id, String name, String description) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+    }
 
     public String getName() {
         return name;
@@ -21,11 +27,11 @@ public class RoleDTO {
         this.description = description;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 }

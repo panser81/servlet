@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface RoleService {
-    public List<RoleDTO> get(int userId) throws SQLException;
+    public List<RoleDTO> get(Long userId) throws SQLException;
 
     public List<RoleDTO> get() throws SQLException;
 
