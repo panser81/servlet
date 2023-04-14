@@ -46,7 +46,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User get(Connection connection, Long userId) {
+    public User get(Connection connection, int userId) {
         String sql = """
                 select u.id, u.username, u.password, u.createdBy 
                 from "USER" u 
@@ -54,7 +54,7 @@ public class UserRepositoryImpl implements UserRepository {
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
-            preparedStatement.setLong(1, userId);
+            preparedStatement.setInt(1, userId);
 
             try (ResultSet rs = preparedStatement.executeQuery()) {
                 while (rs.next()) {
@@ -118,7 +118,7 @@ public class UserRepositoryImpl implements UserRepository {
             }
             try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
-                    user.setId(generatedKeys.getLong(1));
+                    user.setId(generatedKeys.getInt(1));
                 } else {
                     throw new SQLException("Creating user failed, no Id obtained");
                 }
@@ -132,7 +132,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     private User getUser(ResultSet resultSet) throws SQLException {
         User user = new User();
-        Long id = resultSet.getLong(UserConstants.ID_COLUMN_NAME);
+        int id = resultSet.getInt(UserConstants.ID_COLUMN_NAME);
         user.setId(id);
 
         String username = resultSet.getString(UserConstants.USERNAME_COLUMN_NAME);

@@ -4,27 +4,26 @@ import com.gmail.spanteleyko.web.models.RoleDTO;
 import com.gmail.spanteleyko.web.repositories.models.Role;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class RoleConverter {
     public static List<RoleDTO> convertToDTO(List<Role> roles) {
-
         if (roles == null) {
-            return Collections.emptyList();
+            return new ArrayList<>();
         }
 
-        List<RoleDTO> rolesDTOs = roles.stream()
-                .map((Role role) -> new RoleDTO(role.getId(), role.getName(), role.getDescription()))
-                .collect(Collectors.toList());
+        List<RoleDTO> roleDTO = new ArrayList<>();
 
-        return rolesDTOs;
+        roles.forEach(role -> {
+            roleDTO.add(convert(role));
+        });
+
+        return roleDTO;
     }
 
     public static List<Role> convert(List<RoleDTO> roleDTOS) {
         if (roleDTOS == null) {
-            return Collections.emptyList();
+            return new ArrayList<>();
         }
 
         List<Role> roles = new ArrayList<>();
@@ -37,11 +36,11 @@ public class RoleConverter {
     }
 
     public static RoleDTO convert(Role role) {
-        RoleDTO roleDTO = new RoleDTO(
-                role.getId(),
-                role.getName(),
-                role.getDescription()
-        );
+        RoleDTO roleDTO = new RoleDTO();
+
+        roleDTO.setId(role.getId());
+        roleDTO.setName(role.getName());
+        roleDTO.setDescription(role.getDescription());
 
         return roleDTO;
     }

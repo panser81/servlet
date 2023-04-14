@@ -1,7 +1,6 @@
 package com.gmail.spanteleyko.web.controllers;
 
-import com.gmail.spanteleyko.web.constants.RoleConstants;
-import com.gmail.spanteleyko.web.constants.ViewNameConstants;
+import com.gmail.spanteleyko.web.constants.PropertyConstants;
 import com.gmail.spanteleyko.web.constants.UserConstants;
 import com.gmail.spanteleyko.web.models.RoleDTO;
 import com.gmail.spanteleyko.web.models.UserDTO;
@@ -40,22 +39,24 @@ public class LoginServlet extends HttpServlet {
         UserDTO userDTO = getUserDTO(request);
 
         HttpSession session = request.getSession();
-        session.setAttribute(RoleConstants.USER_SESSION_NAME, null);
+        session.setAttribute(PropertyConstants.USER_SESSION_NAME, null);
         UserDTO user = userService.get(userDTO.getUsername(), userDTO.getPassword());
 
         if (user == null) {
-            response.sendRedirect(ViewNameConstants.LOGIN_PAGE);
+            response.sendRedirect(PropertyConstants.LOGIN_PAGE);
         } else {
-            session.setAttribute(RoleConstants.USER_SESSION_NAME, user);
+            session.setAttribute(PropertyConstants.USER_SESSION_NAME, user);
         }
+
+        String url = PropertyConstants.ROLES_PAGE;
 
         List<RoleDTO> roles = user.getRoles();
 
-        if (roles.stream().anyMatch(role -> role.getName().equals(RoleConstants.USER_ROLE_NAME))) {
-            response.sendRedirect(ViewNameConstants.USERS_PAGE);
-        } else {
-            response.sendRedirect(ViewNameConstants.ROLES_PAGE);
+        if (roles.stream().anyMatch(role -> role.getName().equals(PropertyConstants.USER_ROLE_NAME))) {
+            url = PropertyConstants.USERS_PAGE;
         }
+
+        response.sendRedirect(url);
     }
 
     private UserDTO getUserDTO(HttpServletRequest request) {

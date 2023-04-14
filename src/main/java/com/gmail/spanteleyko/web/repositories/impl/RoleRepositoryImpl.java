@@ -23,7 +23,7 @@ public class RoleRepositoryImpl implements RoleRepository {
     }
 
     @Override
-    public List<Role> get(Connection connection, Long userId) throws SQLException {
+    public List<Role> get(Connection connection, int userId) throws SQLException {
         List<Role> roles = new ArrayList<>();
         String sql = """
                 select user_id as id, name, description 
@@ -31,7 +31,7 @@ public class RoleRepositoryImpl implements RoleRepository {
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
-            preparedStatement.setLong(1, userId);
+            preparedStatement.setInt(1, userId);
 
             try (ResultSet rs = preparedStatement.executeQuery()) {
                 while (rs.next()) {
@@ -79,7 +79,7 @@ public class RoleRepositoryImpl implements RoleRepository {
                 """;
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setLong(1, role.getId());
+            preparedStatement.setInt(1, role.getId());
             preparedStatement.setString(2, role.getName());
             preparedStatement.setString(3, role.getDescription());
 
@@ -97,7 +97,7 @@ public class RoleRepositoryImpl implements RoleRepository {
 
     private Role getRole(ResultSet resultSet) throws SQLException {
         Role role = new Role();
-        Long id = resultSet.getLong(UserConstants.ID_COLUMN_NAME);
+        int id = resultSet.getInt(UserConstants.ID_COLUMN_NAME);
         role.setId(id);
 
         String name = resultSet.getString(UserConstants.NAME_COLUMN_NAME);

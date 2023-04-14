@@ -8,7 +8,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static com.gmail.spanteleyko.web.constants.DatabaseConstants.*;
+import static com.gmail.spanteleyko.web.constants.PropertyConstants.*;
 
 public class ConnectionRepositoryImpl implements ConnectionRepository {
     private static ConnectionRepository connectionRepository;

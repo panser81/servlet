@@ -9,7 +9,7 @@ import java.util.List;
 public interface UserRepository {
     List<User> get(Connection connection);
 
-    User get(Connection connection, Long userId);
+    User get(Connection connection, int userId);
 
     User get(Connection connection, String username, String password);
 

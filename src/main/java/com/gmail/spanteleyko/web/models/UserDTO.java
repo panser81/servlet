@@ -1,21 +1,20 @@
 package com.gmail.spanteleyko.web.models;
 
 import java.sql.Date;
-import java.util.ArrayList;
 import java.util.List;
 
 public class UserDTO {
-    private Long id;
+    private Integer id;
     private String username;
     private String password;
     private Date createdBy;
-    private List<RoleDTO> roles = new ArrayList<>();
+    private List<RoleDTO> roles;
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
